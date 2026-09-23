@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>হাদিস অনুসন্ধান</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f5c4d">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f3f6f4;--card:#fff;--ink:#16302b;--mute:#5b736d;--acc:#0f5c4d;--line:#d4dfdb;--ok:#0f6b3a;--warn:#9a5b00;--bad:#a3261c}
@@ -115,7 +119,7 @@ function byWord(b,w,name){
     if(!res.length){st.textContent="কোনো ফলাফল পাওয়া যায়নি। অন্য শব্দ দিয়ে চেষ্টা করুন।";return}
     st.textContent=res.length+"টি ফলাফল"+(res.length>20?" (প্রথম ২০টি দেখানো হচ্ছে)":"");
     out.innerHTML=res.slice(0,20).map(function(h){return card(h,"",name)}).join("");
-  }).catch(function(){st.textContent="লোড করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন."});
+  }).catch(function(){st.textContent="লোড করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।"});
 }
 
 function run(){
@@ -129,6 +133,7 @@ function run(){
 }
 $("go").addEventListener("click",run);
 q.addEventListener("keydown",function(e){if(e.key==="Enter")run()});
+if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
 </script>
 </body>
 </html>
