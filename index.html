@@ -57,6 +57,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <p class="note">হাদিসের মান আলেমদের মধ্যে ভিন্ন হতে পারে, তাই মানের সাথে উৎস দেখানো হয়। আমল বা ফতোয়ার আগে যোগ্য আলেমের কাছ থেকে যাচাই করে নিন।</p>
 <div id="st"></div>
 <div id="out"></div>
+<button id="more" hidden style="margin-top:12px">আরও দেখুন</button>
 </main>
 
 <script>
@@ -110,6 +111,16 @@ function byNumber(b,n,name){
   }).catch(function(){st.textContent="এই নম্বরে হাদিস পাওয়া যায়নি বা ইন্টারনেট সংযোগে সমস্যা হয়েছে।"});
 }
 
+var results=[],shown=0,curName="";
+function showMore(){
+  var part=results.slice(shown,shown+20);
+  out.insertAdjacentHTML("beforeend",part.map(function(h){return card(h,"",curName)}).join(""));
+  shown+=part.length;
+  st.textContent=results.length+"টি ফলাফল, "+shown+"টি দেখানো হচ্ছে";
+  $("more").hidden=shown>=results.length;
+}
+$("more").addEventListener("click",showMore);
+
 function byWord(b,w,name){
   out.innerHTML="";
   var p=cache[b]?Promise.resolve(cache[b]):(st.textContent="গ্রন্থ লোড হচ্ছে, প্রথমবার কিছুক্ষণ লাগতে পারে...",
@@ -117,12 +128,12 @@ function byWord(b,w,name){
   p.then(function(d){
     var res=d.hadiths.filter(function(h){return h.text&&h.text.indexOf(w)>-1});
     if(!res.length){st.textContent="কোনো ফলাফল পাওয়া যায়নি। অন্য শব্দ দিয়ে চেষ্টা করুন।";return}
-    st.textContent=res.length+"টি ফলাফল"+(res.length>20?" (প্রথম ২০টি দেখানো হচ্ছে)":"");
-    out.innerHTML=res.slice(0,20).map(function(h){return card(h,"",name)}).join("");
+    results=res;shown=0;curName=name;out.innerHTML="";showMore();
   }).catch(function(){st.textContent="লোড করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।"});
 }
 
 function run(){
+  $("more").hidden=true;
   var v=bn2en(q.value.trim());
   if(!v){st.textContent="আগে কিছু লিখুন।";return}
   var s=$("book"),name=s.options[s.selectedIndex].text;
