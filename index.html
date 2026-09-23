@@ -30,6 +30,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .g{display:inline-block;font-size:.82rem;font-weight:600;margin:4px 8px 0 0}
 .ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
 #st{margin-top:12px;color:var(--mute)}
+.exp{margin-top:10px;background:transparent;color:var(--acc);border:1px solid var(--acc)}
+.exp:disabled{opacity:.6}
+.ai{white-space:pre-wrap;margin-top:10px;font-size:.95rem}
 </style>
 </head>
 <body>
@@ -54,7 +57,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   <button id="go">খুঁজুন</button>
 </div>
 
-<p class="note">হাদিসের মান আলেমদের মধ্যে ভিন্ন হতে পারে, তাই মানের সাথে উৎস দেখানো হয়। আমল বা ফতোয়ার আগে যোগ্য আলেমের কাছ থেকে যাচাই করে নিন।</p>
+<p class="note">হাদিসের মান আলেমদের মধ্যে ভিন্ন হতে পারে, তাই মানের সাথে উৎস দেখানো হয়। আমল বা ফতোয়ার আগে যোগ্য আলেমের কাছ থেকে যাচাই করে নিন। "ব্যাখ্যা দেখুন" চাপলে ওই হাদিসের লেখা AI সেবায় (Google Gemini) পাঠানো হয়।</p>
 <div id="st"></div>
 <div id="out"></div>
 <button id="more" hidden style="margin-top:12px">আরও দেখুন</button>
@@ -63,6 +66,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <script>
 var CDN="https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/";
 var cache={};
+var store=[];
+var AI_URL="https://hadith-ai.sohan060203.workers.dev";
 var $=function(i){return document.getElementById(i)};
 var st=$("st"),out=$("out"),q=$("q");
 
@@ -94,9 +99,12 @@ function card(h,ar,bookName){
     gr='<span class="g">মানের তথ্য এই ডেটায় নেই। অন্য নির্ভরযোগ্য উৎসে যাচাই করুন।</span>';
   }
   var r=h.reference?(' | অধ্যায় '+esc(h.reference.book)+', হাদিস '+esc(h.reference.hadith)):'';
+  var gt=(h.grades&&h.grades.length)?h.grades.map(function(x){return x.name+": "+x.grade}).join("; "):"মানের তথ্য নেই";
+  var i=store.push({text:h.text,grades:gt,ref:bookName+", হাদিস নং "+h.hadithnumber})-1;
   return '<article class="h">'+(ar?'<p class="ar">'+esc(ar)+'</p>':'')+
     '<div>'+esc(h.text)+'</div><div>'+gr+'</div>'+
-    '<div class="ref">'+esc(bookName)+', হাদিস নং '+esc(h.hadithnumber)+r+'</div></article>';
+    '<div class="ref">'+esc(bookName)+', হাদিস নং '+esc(h.hadithnumber)+r+'</div>'+
+    '<button class="exp" data-i="'+i+'">ব্যাখ্যা দেখুন (AI)</button><div class="ai" id="ai'+i+'"></div></article>';
 }
 
 function getJSON(u){return fetch(u).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})}
@@ -142,6 +150,19 @@ function run(){
     byNumber(s.value,v,name);
   }else byWord(s.value,q.value.trim(),name);
 }
+
+out.addEventListener("click",function(e){
+  var b=e.target.closest(".exp");if(!b)return;
+  var d=store[b.dataset.i],box=$("ai"+b.dataset.i);
+  b.disabled=true;box.textContent="ব্যাখ্যা তৈরি হচ্ছে...";
+  fetch(AI_URL,{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({mode:"explain",text:d.text,grades:d.grades,ref:d.ref})})
+  .then(function(r){return r.json()})
+  .then(function(j){
+    box.textContent=j.answer?(j.answer+"\n\n(এটি AI-এর তৈরি ব্যাখ্যা, হাদিসের অংশ নয়। ভুল থাকতে পারে, আলেমের কাছে যাচাই করুন।)"):(j.error||"ব্যাখ্যা পাওয়া যায়নি।");
+    b.disabled=false;
+  }).catch(function(){box.textContent="সংযোগে সমস্যা হয়েছে। আবার চেষ্টা করুন।";b.disabled=false});
+});
 $("go").addEventListener("click",run);
 q.addEventListener("keydown",function(e){if(e.key==="Enter")run()});
 if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
