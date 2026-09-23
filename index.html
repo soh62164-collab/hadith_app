@@ -91,16 +91,33 @@ function gradeClass(g){
   return "";
 }
 
+var curBook="";
+function bnGrade(g){var t=(g||"").toLowerCase();
+  if(/maudu|mawdu|fabricat/.test(t))return "জাল (মাওযু)";
+  if(/da.?if|weak/.test(t))return "জয়িফ (দুর্বল)";
+  if(t.indexOf("hasan")>-1&&t.indexOf("sahih")>-1)return "হাসান সহিহ";
+  if(t.indexOf("hasan")>-1)return "হাসান";
+  if(t.indexOf("sahih")>-1)return "সহিহ";
+  return g}
+function gradeHTML(l){return l.map(function(x){return '<span class="g '+gradeClass(x.grade)+'">'+esc(bnGrade(x.grade))+' ('+esc(x.name)+')</span>'}).join("")}
+function gradeText(l){return l.map(function(x){return x.name+": "+bnGrade(x.grade)+" ["+x.grade+"]"}).join("; ")}
+function noGrade(bk){return (bk==="bukhari"||bk==="muslim")?
+  "এই গ্রন্থে হাদিসের আলাদা মান দেওয়া থাকে না। এটি সহিহ সংকলন হিসেবে গৃহীত, তবে নির্দিষ্ট বর্ণনা নিয়ে আলেমদের আলোচনা থাকতে পারে।":
+  "মানের তথ্য এই ডেটায় নেই। অন্য নির্ভরযোগ্য উৎসে যাচাই করুন।"}
+function fillGrade(i,bk,n){
+  var el=$("gr"+i);if(!el)return;
+  function none(){el.textContent=noGrade(bk);store[i].grades=noGrade(bk)}
+  getJSON(CDN+"eng-"+bk+"/"+n+".json").then(function(d){
+    var g=one(d).grades;
+    if(g&&g.length){el.outerHTML=gradeHTML(g);store[i].grades=gradeText(g)}else none();
+  }).catch(none);
+}
 function card(h,ar,bookName){
-  var gr="";
-  if(h.grades&&h.grades.length){
-    h.grades.forEach(function(x){gr+='<span class="g '+gradeClass(x.grade)+'">'+esc(x.grade)+' ('+esc(x.name)+')</span>'});
-  }else{
-    gr='<span class="g">মানের তথ্য এই ডেটায় নেই। অন্য নির্ভরযোগ্য উৎসে যাচাই করুন।</span>';
-  }
+  var bk=curBook,has=h.grades&&h.grades.length;
+  var i=store.push({text:h.text,grades:has?gradeText(h.grades):"মানের তথ্য পাওয়া যায়নি",ref:bookName+", হাদিস নং "+h.hadithnumber})-1;
+  var gr=has?gradeHTML(h.grades):'<span class="g" id="gr'+i+'">মানের তথ্য খুঁজছি...</span>';
+  if(!has)setTimeout(function(){fillGrade(i,bk,h.hadithnumber)},0);
   var r=h.reference?(' | অধ্যায় '+esc(h.reference.book)+', হাদিস '+esc(h.reference.hadith)):'';
-  var gt=(h.grades&&h.grades.length)?h.grades.map(function(x){return x.name+": "+x.grade}).join("; "):"মানের তথ্য নেই";
-  var i=store.push({text:h.text,grades:gt,ref:bookName+", হাদিস নং "+h.hadithnumber})-1;
   return '<article class="h">'+(ar?'<p class="ar">'+esc(ar)+'</p>':'')+
     '<div>'+esc(h.text)+'</div><div>'+gr+'</div>'+
     '<div class="ref">'+esc(bookName)+', হাদিস নং '+esc(h.hadithnumber)+r+'</div>'+
@@ -144,7 +161,7 @@ function run(){
   $("more").hidden=true;
   var v=bn2en(q.value.trim());
   if(!v){st.textContent="আগে কিছু লিখুন।";return}
-  var s=$("book"),name=s.options[s.selectedIndex].text;
+  var s=$("book"),name=s.options[s.selectedIndex].text;curBook=s.value;
   if(mode()==="num"){
     if(!/^\d+$/.test(v)){st.textContent="নম্বর মোডে শুধু সংখ্যা লিখুন।";return}
     byNumber(s.value,v,name);
