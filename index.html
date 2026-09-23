@@ -29,6 +29,12 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .ref{font-size:.85rem;color:var(--mute);margin-top:8px}
 .g{display:inline-block;font-size:.82rem;font-weight:600;margin:4px 8px 0 0}
 .ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 12px}
+summary{font-weight:700;cursor:pointer;color:var(--acc)}
+summary:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+details h2{font-size:1rem;margin:14px 0 4px}
+details ul{padding-left:18px;margin:4px 0}
+details li{margin:5px 0;font-size:.93rem}
 #st{margin-top:12px;color:var(--mute)}
 .exp{margin-top:10px;background:transparent;color:var(--acc);border:1px solid var(--acc)}
 .exp:disabled{opacity:.6}
@@ -39,6 +45,43 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <main>
 <h1>হাদিস অনুসন্ধান</h1>
 <p class="sub">যাচাইকৃত হাদিস ডেটাবেস থেকে সরাসরি দেখানো হয়। কোনো হাদিস বানানো হয় না।</p>
+
+<details>
+<summary>এই এপ কীভাবে কাজ করে (ব্যবহারবিধি)</summary>
+
+<h2>এটি কী</h2>
+<ul><li>একটি খোলা (ওপেন-সোর্স) হাদিস ডেটাসেট থেকে হাদিস খুঁজে দেখানোর এপ। হাদিসের লেখা সরাসরি ডেটাবেস থেকে আসে, AI নিজে কোনো হাদিস লেখে না।</li></ul>
+
+<h2>খোঁজার তিনটি উপায়</h2>
+<ul>
+<li><b>নম্বর দিয়ে:</b> গ্রন্থ বেছে হাদিস নম্বর লিখুন। আরবি পাঠসহ দেখাবে।</li>
+<li><b>শব্দ দিয়ে:</b> বাংলা শব্দ লিখুন (যেমন নিয়ত)। যে হাদিসের অনুবাদে শব্দটি আছে সেগুলো আসবে। ২০টি করে দেখায়, বাকিগুলো "আরও দেখুন" চাপলে আসবে।</li>
+<li><b>প্রশ্ন করুন:</b> বাংলায় প্রশ্ন লিখুন। AI শুধু ১-৩টি খোঁজার শব্দ বাছে, তারপর ওই শব্দ দিয়ে ডেটাবেসে খোঁজা হয়। কোন শব্দ খোঁজা হলো তা ওপরে দেখানো হয়।</li>
+</ul>
+
+<h2>ফলাফলে কী দেখবেন</h2>
+<ul>
+<li>বাংলা অনুবাদ, গ্রন্থের নাম ও হাদিস নম্বর।</li>
+<li>হাদিসের মান (সহিহ, হাসান, জয়িফ, জাল) এবং কোন আলেমের মত অনুযায়ী তা।</li>
+<li>বুখারি ও মুসলিমে সাধারণত হাদিসের আলাদা মান দেওয়া থাকে না। এই দুটি সহিহ সংকলন হিসেবে গৃহীত।</li>
+</ul>
+
+<h2>"ব্যাখ্যা দেখুন (AI)" বাটন</h2>
+<ul>
+<li>AI শুধু ওই হাদিসের লেখা ও মান দেখে সহজ বাংলায় ব্যাখ্যা করে। নতুন হাদিস, সনদ বা মান বানানোর কথা নয়।</li>
+<li>AI ভুল করতে পারে। ব্যাখ্যা হাদিসের অংশ নয়।</li>
+</ul>
+
+<h2>জেনে রাখুন</h2>
+<ul>
+<li>হাদিসের মান নিয়ে আলেমদের মধ্যে মতভেদ থাকতে পারে, তাই মানের সাথে আলেমের নাম দেখানো হয়।</li>
+<li>জয়িফ বা জাল মানের হাদিস দেখলে, অথবা মান না পেলে, আমলের আগে যোগ্য আলেমের কাছে জেনে নিন।</li>
+<li>এটি ফতোয়া নয়। বাংলা অনুবাদেও ভুল থাকতে পারে।</li>
+<li>ইন্টারনেট লাগে। কোনো গ্রন্থে প্রথমবার শব্দ দিয়ে খুঁজলে লোড হতে কিছুক্ষণ লাগতে পারে।</li>
+<li>প্রশ্ন-খোঁজা শব্দ মেলানোর ওপর নির্ভর করে, তাই কিছু প্রাসঙ্গিক হাদিস বাদ পড়তে পারে। না পেলে অন্য শব্দে বা অন্য গ্রন্থে চেষ্টা করুন।</li>
+<li>ব্যাখ্যা বা প্রশ্ন ব্যবহার করলে সংশ্লিষ্ট লেখা AI সেবায় (Google Gemini) পাঠানো হয়।</li>
+</ul>
+</details>
 
 <div class="box">
   <select id="book" aria-label="হাদিস গ্রন্থ">
@@ -52,6 +95,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   <div class="tabs">
     <label><input type="radio" name="m" value="num" checked><span>নম্বর দিয়ে</span></label>
     <label><input type="radio" name="m" value="kw"><span>শব্দ দিয়ে</span></label>
+    <label><input type="radio" name="m" value="ask"><span>প্রশ্ন করুন</span></label>
   </div>
   <input id="q" type="text" inputmode="numeric" placeholder="হাদিস নম্বর লিখুন, যেমন ১ বা 1" aria-label="অনুসন্ধান">
   <button id="go">খুঁজুন</button>
@@ -78,8 +122,11 @@ function mode(){return document.querySelector('input[name=m]:checked').value}
 document.querySelectorAll('input[name=m]').forEach(function(r){
   r.addEventListener("change",function(){
     q.value="";
+    st.textContent="";
     if(mode()==="num"){q.inputMode="numeric";q.placeholder="হাদিস নম্বর লিখুন, যেমন ১ বা 1"}
-    else{q.inputMode="text";q.placeholder="বাংলা শব্দ লিখুন, যেমন নিয়ত"}
+    else if(mode()==="kw"){q.inputMode="text";q.placeholder="বাংলা শব্দ লিখুন, যেমন নিয়ত"}
+    else{q.inputMode="text";q.placeholder="বাংলায় প্রশ্ন লিখুন, যেমন নিয়ত সম্পর্কে হাদিস কী বলে?";
+      st.textContent="AI শুধু খোঁজার শব্দ বাছে। হাদিস সরাসরি ডেটাবেস থেকে আসে।"}
   });
 });
 
@@ -136,15 +183,36 @@ function byNumber(b,n,name){
   }).catch(function(){st.textContent="এই নম্বরে হাদিস পাওয়া যায়নি বা ইন্টারনেট সংযোগে সমস্যা হয়েছে।"});
 }
 
-var results=[],shown=0,curName="";
+var results=[],shown=0,curName="",stPrefix="";
 function showMore(){
   var part=results.slice(shown,shown+20);
   out.insertAdjacentHTML("beforeend",part.map(function(h){return card(h,"",curName)}).join(""));
   shown+=part.length;
-  st.textContent=results.length+"টি ফলাফল, "+shown+"টি দেখানো হচ্ছে";
+  st.textContent=stPrefix+results.length+"টি ফলাফল, "+shown+"টি দেখানো হচ্ছে";
   $("more").hidden=shown>=results.length;
 }
 $("more").addEventListener("click",showMore);
+
+function byAsk(b,question,name){
+  out.innerHTML="";st.textContent="প্রশ্ন বুঝছি...";
+  fetch(AI_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({mode:"keywords",question:question})})
+  .then(function(r){return r.json()})
+  .then(function(j){
+    if(!j.keywords||!j.keywords.length){st.textContent=j.error||"খোঁজার শব্দ বের করা যায়নি। \"শব্দ দিয়ে\" অংশে নিজে খুঁজুন।";return}
+    var kws=j.keywords;
+    var p=cache[b]?Promise.resolve(cache[b]):(st.textContent="গ্রন্থ লোড হচ্ছে, প্রথমবার কিছুক্ষণ লাগতে পারে...",
+      getJSON(CDN+"ben-"+b+".json").then(function(d){cache[b]=d;return d}));
+    return p.then(function(d){
+      var sc=[];
+      d.hadiths.forEach(function(h){var t=h.text||"",n=0;kws.forEach(function(k){if(t.indexOf(k)>-1)n++});if(n)sc.push({h:h,n:n})});
+      sc.sort(function(x,y){return y.n-x.n});
+      results=sc.map(function(x){return x.h});shown=0;curName=name;
+      stPrefix="খোঁজা শব্দ: "+kws.join(", ")+"। ";
+      if(!results.length){st.textContent=stPrefix+"কোনো হাদিস পাওয়া যায়নি। প্রশ্নটি অন্যভাবে লিখে বা অন্য গ্রন্থে চেষ্টা করুন।";return}
+      showMore();
+    });
+  }).catch(function(){st.textContent="লোড করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।"});
+}
 
 function byWord(b,w,name){
   out.innerHTML="";
@@ -158,14 +226,15 @@ function byWord(b,w,name){
 }
 
 function run(){
-  $("more").hidden=true;
+  $("more").hidden=true;stPrefix="";
   var v=bn2en(q.value.trim());
   if(!v){st.textContent="আগে কিছু লিখুন।";return}
   var s=$("book"),name=s.options[s.selectedIndex].text;curBook=s.value;
   if(mode()==="num"){
     if(!/^\d+$/.test(v)){st.textContent="নম্বর মোডে শুধু সংখ্যা লিখুন।";return}
     byNumber(s.value,v,name);
-  }else byWord(s.value,q.value.trim(),name);
+  }else if(mode()==="ask")byAsk(s.value,q.value.trim(),name);
+  else byWord(s.value,q.value.trim(),name);
 }
 
 out.addEventListener("click",function(e){
