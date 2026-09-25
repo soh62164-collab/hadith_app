@@ -245,7 +245,7 @@ out.addEventListener("click",function(e){
     body:JSON.stringify({mode:"explain",text:d.text,grades:d.grades,ref:d.ref})})
   .then(function(r){return r.json()})
   .then(function(j){
-    box.textContent=j.answer?(j.answer+"\n\n(এটি AI-এর তৈরি ব্যাখ্যা, হাদিসের অংশ নয়। ভুল থাকতে পারে, আলেমের কাছে যাচাই করুন।)"):(j.error||"ব্যাখ্যা পাওয়া যায়নি।");
+    box.textContent=j.answer?(j.answer+"\n\n(এটি AI-এর তৈরি ব্যাখ্যা, হাদিসের অংশ নয়। ভুল থাকতে পারে, আলেমের কাছে যাচাই করুন।)"):((j.error||"ব্যাখ্যা পাওয়া যায়নি।")+(j.debug?("\n[ডিবাগ]: "+j.debug):""));
     b.disabled=false;
   }).catch(function(){box.textContent="সংযোগে সমস্যা হয়েছে। আবার চেষ্টা করুন।";b.disabled=false});
 });
